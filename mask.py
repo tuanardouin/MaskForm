@@ -53,7 +53,7 @@ def shape_selection(event, x, y, flags, param):
             cv2.imshow('Selection', crop_img)
             cv2.setMouseCallback("image", doNothing)
 
-            print('Validé : V - Recommencer : R')
+            print('Valide : V - Recommencer : R')
             return
 
 # Parse arguments
