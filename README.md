@@ -9,7 +9,7 @@ git clone https://github.com/tuanardouin/MaskForm.git
 cd MaskForm
 virtualenv .venv
 source .venv/bin/activate
-pip install -R requierement.txt
+pip install -r requierement.txt
 ```
 
 ## Usage
