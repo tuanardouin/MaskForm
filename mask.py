@@ -28,7 +28,7 @@ def shape_selection(event, x, y, flags, param):
 
             ref_point = []
             ref_point.append((x, y))
-            image = cv2.drawMarker(image, (x, y), (255, 0, 0), markerSize=20, thickness=4)
+            image = cv2.drawMarker(image, (x, y), (255, 0, 0), markerSize=10, thickness=1)
  
             label_step = 1
             return
@@ -41,7 +41,7 @@ def shape_selection(event, x, y, flags, param):
             ref_point.append((x, y))
 
             label_step = 0
-            image = cv2.drawMarker(image, (x, y), (255, 0, 0), markerSize=20, thickness=4)
+            image = cv2.drawMarker(image, (x, y), (255, 0, 0), markerSize=10, thickness=1)
             image = cv2.rectangle(image, ref_point[0], ref_point[1], (255, 0, 0), 1)
 
             start_y = data_to_extract[labels[label_i]]['start_y'] - 5
@@ -63,8 +63,10 @@ ap.add_argument("-i", "--image", required=False, help="Path to the image")
 ap.add_argument("-l", "--label", required=False, help="Path to the list of label")
 args = vars(ap.parse_args())
 
+print(args)
+
 # PDF to jpg
-if 'pdf' in args:
+if args['pdf'] is not None:
     filename = args['pdf']
     print('Converting {} to jpg'.format(filename))
     pages = convert_from_path(filename, 300, thread_count=4, grayscale=False)
@@ -85,8 +87,24 @@ if 'pdf' in args:
 f = open(args["label"], "r")
 labels = f.read().split(',')
 
+def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
+    dim = None
+    (h, w) = image.shape[:2]
+
+    if width is None and height is None:
+        return image
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    return cv2.resize(image, dim, interpolation=inter)
+
 # Load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args["image"])
+image = ResizeWithAspectRatio(image, height=1340)
 cv2.namedWindow("image")
 cv2.setMouseCallback("image", shape_selection)
 
@@ -95,7 +113,7 @@ try:
     f = open(args["image"] + '_mask.json', "r")
     data_to_extract = json.loads(f.read())
     for key in data_to_extract:
-        image = cv2.rectangle(image, (data_to_extract[key]['start_x'], data_to_extract[key]['start_y']), (data_to_extract[key]['end_x'], data_to_extract[key]['end_y']), (0, 255, 0), 2)
+        image = cv2.rectangle(image, (data_to_extract[key]['start_x'], data_to_extract[key]['start_y']), (data_to_extract[key]['end_x'], data_to_extract[key]['end_y']), (0, 255, 0), 1)
     print('data found : ', data_to_extract)
 except:
     data_to_extract = {}
@@ -118,7 +136,7 @@ while True:
     if key == ord("v"):
         if labels[label_i] not in data_to_extract:
             pass
-        image = cv2.rectangle(image, ref_point[0], ref_point[1], (255, 0, 0), 2)
+        image = cv2.rectangle(image, ref_point[0], ref_point[1], (0, 255, 0), 1)
         if label_i == len(labels) - 1:
             with open(args['image'] + '_mask.json', 'w') as json_file:
                 json.dump(data_to_extract, json_file, indent=4, sort_keys=True)
