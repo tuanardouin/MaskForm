@@ -157,7 +157,7 @@ while True:
     # if the 'p' key is pressed, write the extracted mask in a json file
     if key == ord("p"):
         with open(args['image'] + '_mask.json', 'w') as json_file:
-            json.dump(data_to_extract, json_file)
+            json.dump(data_to_extract, json_file, indent=4, sort_keys=True)
         break
 
 # Destroy all windows open
