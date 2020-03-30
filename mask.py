@@ -104,7 +104,7 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 
 # Load the image, clone it, and setup the mouse callback function
 image = cv2.imread(args["image"])
-image = ResizeWithAspectRatio(image, height=1340)
+# image = ResizeWithAspectRatio(image, height=1340)
 cv2.namedWindow("image")
 cv2.setMouseCallback("image", shape_selection)
 
